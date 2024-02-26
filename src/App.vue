@@ -1,30 +1,65 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { computed, onMounted, ref } from 'vue';
+import axios from 'axios';
+import TawkHeader from '@/components/Header.vue';
+import { Category } from '@/interfaces';
+import { daysAgo, noOfArticles } from '@/utils';
+
+const isLoading = ref(true);
+const isError = ref(false);
+const searchQuery = ref('');
+const categories = ref<Category[]>([]);
+
+// In-memory cache
+const cache = ref<{ [key: string]: Category[] }>({});
+
+async function fetchCategories() {
+  const cacheKey = 'categories';
+  if (cache.value[cacheKey]) {
+    categories.value = cache.value[cacheKey];
+  } else {
+    try {
+      const response = await axios.get<Category[]>('/api/categories');
+      categories.value = response.data.filter(category => category.enabled);
+      cache.value[cacheKey] = response.data; // Update cache
+    } catch (error) {
+      isError.value = true;
+      console.error('Failed to fetch categories:', error);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
+onMounted(fetchCategories);
+
+//filter categories based on the search query
+const filteredData = computed(() => categories.value.filter(category =>
+  searchQuery.value === '' ||
+  category.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+  category.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+));
 </script>
 
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <TawkHeader @search-update="searchQuery = $event" />
+    <div v-if="isLoading">Loading...</div>
+    <div v-else-if="isError">An error occurred while fetching categories.</div>
+    <div v-else>
+      <div v-for="category in filteredData" :key="category.id" class="category-card">
+        <h4>{{ category.title }}</h4>
+        <p>{{ noOfArticles(category.totalArticle) }}</p>
+        <p>{{ daysAgo(category.updatedOn) }}</p>
+      </div>
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+<style lang="scss">
+.category-card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 10px;
 }
 </style>
