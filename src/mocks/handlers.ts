@@ -7,8 +7,12 @@ export const handlers = [
   http.get('/api/categories', () => {
       return HttpResponse.json(categories)
   }),
-    //Request articles for a category
-    http.get('/api/category/:id', () => {
+    //Request a single category by id
+    http.get('/api/category/:id', ({params}) => {
+        return HttpResponse.json(categories.find(category => category.id === params.id))
+    }),
+    //Request list of articles by category id
+    http.get('/api/category/:id/articles', () => {
         return HttpResponse.json(articles)
     }),
     //Request info of an author

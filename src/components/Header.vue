@@ -3,19 +3,12 @@
     <div id="header-text">
       <h1>Knowledge base doesn't have to be boring</h1>
       <h3>Everything you need to manage your messaging</h3>
-      <input type="text" v-model="searchQuery" @input="updateSearch" placeholder="Search..." />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-const searchQuery = ref('');
-const emit = defineEmits(['search-update']);
 
-function updateSearch() {
-  emit('search-update', searchQuery.value);
-}
 </script>
 
 <style lang="scss">
