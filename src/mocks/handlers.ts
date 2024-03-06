@@ -19,7 +19,7 @@ export const handlers = [
     http.get('api/author/:id', ({ params }) => {
         return HttpResponse.json(articles.filter(article => article.authorId === params.id))
     }),
-    http.get('/api/search/*', () => {
+    http.get('/api/search', () => {
         return HttpResponse.json(articles)
     })
 ];

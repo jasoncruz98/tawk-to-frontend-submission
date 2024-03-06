@@ -48,10 +48,6 @@ const filteredData = computed(() => categories.value.filter(category =>
 
 <template>
   <div>
-    <div class="search-box">
-      <input type="text" v-model="searchQuery" @input="updateSearch" placeholder="Search for answers" class="search-input"/>
-      <fa :icon="['fas', 'magnifying-glass']" class="search-icon"/>
-    </div>
     <div v-if="isLoading"></div>
     <div v-else-if="isError">An error occurred while fetching categories.</div>
     <div v-else class="category-list">
@@ -119,36 +115,6 @@ const filteredData = computed(() => categories.value.filter(category =>
   padding-right: 31px;
   border-radius: 4px;
   border: 1px solid $green;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  justify-items: center;
-  margin-bottom: 20px;
-}
-
-.search-input {
-  flex-grow: 1;
-  height: 60px;
-  background: #FFFFFF;
-  border: 1px solid #EEEEEE;
-  border-radius: 4px;
-  padding-left: 10px;
-  color: #333333;
-  font-size: 16px;
-  font-style: normal; 
-}
-
-.search-input::placeholder {
-  color: #AAAAAA;
-  font-size: 16px;
-  font-style: normal;
-}
-
-.search-input:focus {
-  border-color: #CCCCCC; 
-  outline: none;
 }
 
 h1 {
